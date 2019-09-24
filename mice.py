@@ -1,30 +1,29 @@
+"""
+restaurant.py
+Output the inspection results for Wo Hop, 17 Mott Street, NY, NY 10013
+"""
+
 import sys
 import csv   #Comma-separated values.  Do not name this Python script csv.py.
-import datetime
-import urllib.request
-import io
 
-#Database is at
-#https://data.cityofnewyork.us/Health/DOHMH-New-York-City-Restaurant-Inspection-Results/43nn-pn8j
-url = "https://data.cityofnewyork.us/api/views/43nn-pn8j/rows.csv"
+filename = "/Users/student/Documents/DOHMH_New_York_City_Restaurant_Inspection_Results.csv"
 
 try:
-    fileFromUrl = urllib.request.urlopen(url)
-except urllib.error.URLError as error:
-    print("urllib.error.URLError", error, file = sys.stderr)
+    csvfile = open(filename)
+except FileNotFoundError:
+    print(f'Sorry, could not find file "{filename}".', file = sys.stderr)
+    sys.exit(1)
+except PermissionError:
+    print(f'Sorry, no permission to open file "{filename}".', file = sys.stderr)
     sys.exit(1)
 
-sequenceOfBytes = fileFromUrl.read() #Read whole file into one big sequenceOfBytes.
-fileFromUrl.close()
+lines = csv.reader(csvfile)
 
-try:
-    s = sequenceOfBytes.decode("utf-8")    #s is a string
-except UnicodeError as error:
-    print(error, file = sys.stderr)
-    sys.exit(1)
+for line in lines:              #During each iteration, line is a list of strings.
+    if line[9] == "Evidence of mice or live mice present in facility's food and/or non-food areas.":   
+        print(line[1], line[8]) #name and inspection date
+        print(line[11])         #violation description
+        print()
 
-fileFromString = io.StringIO(s)
-lines = csv.reader(fileFromString)   #or lines = csv.reader(s.splitlines())
-miceLines = [line for line in lines if line[9] == "Evidence of mice or live mice present in facility's food and/or non-food areas. "]
-fileFromString.close()
-# Will continue to work on this to sort and find the restaurant(s) with the most mice violations in the city!
+csvfile.close()
+sys.exit(0)
