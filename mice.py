@@ -21,7 +21,7 @@ lines = csv.reader(csvfile)
 mice_spot = []
 for line in lines:              #During each iteration, line is a list of strings.
     if " mice " in line[11]:
-        mice_spot = line[:2].append
+        mice_spot.append(line[:2])
         #print(line[1], line[8]) #name and inspection date
         #print(line[11])         #violation description
         #print()
