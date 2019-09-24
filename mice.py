@@ -1,6 +1,6 @@
 """
 restaurant.py
-Output the inspection results for Wo Hop, 17 Mott Street, NY, NY 10013
+Find restaurants with mice violations. Will work on this some more to find the resturant(s) with the most mice violations
 """
 
 import sys
