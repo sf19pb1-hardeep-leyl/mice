@@ -20,7 +20,7 @@ except PermissionError:
 lines = csv.reader(csvfile)
 
 for line in lines:              #During each iteration, line is a list of strings.
-    if line[9] == "Evidence of mice or live mice present in facility's food and/or non-food areas.":   
+    if line[11] == "Evidence of mice or live mice present in facility's food and/or non-food areas.":   
         print(line[1], line[8]) #name and inspection date
         print(line[11])         #violation description
         print()
