@@ -18,12 +18,13 @@ except PermissionError:
     sys.exit(1)
 
 lines = csv.reader(csvfile)
-
+mice_spot = []
 for line in lines:              #During each iteration, line is a list of strings.
     if " mice " in line[11]:
-        print(line[1], line[8]) #name and inspection date
-        print(line[11])         #violation description
-        print()
+        mice_spot = line[:2].append
+        #print(line[1], line[8]) #name and inspection date
+        #print(line[11])         #violation description
+        #print()
 
 csvfile.close()
 sys.exit(0)
