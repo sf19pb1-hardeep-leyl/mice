@@ -1,30 +1,45 @@
 """
-restaurant.py
-Find restaurants with mice violations. Will work on this some more to find the resturant(s) with the most mice violations
+List the CAMIS number, name, and number of mouse violations
+of the 10 restaurants with the largest number of mouse violations.
 """
 
 import sys
-import csv   #Comma-separated values.  Do not name this Python script csv.py.
+import csv  #Comma-Separated Values
+import urllib.request
+import collections
 
-filename = "/Users/student/Documents/DOHMH_New_York_City_Restaurant_Inspection_Results.csv"
+#Database is at
+#https://data.cityofnewyork.us/Health/DOHMH-New-York-City-Restaurant-Inspection-Results/43nn-pn8j
+url = "https://data.cityofnewyork.us/api/views/43nn-pn8j/rows.csv"
 
 try:
-    csvfile = open(filename)
-except FileNotFoundError:
-    print(f'Sorry, could not find file "{filename}".', file = sys.stderr)
-    sys.exit(1)
-except PermissionError:
-    print(f'Sorry, no permission to open file "{filename}".', file = sys.stderr)
+    fileFromUrl = urllib.request.urlopen(url)
+except urllib.error.URLError as error:
+    print(error, file = sys.stderr)
     sys.exit(1)
 
-lines = csv.reader(csvfile)
-mice_spot = []
-for line in lines:              #During each iteration, line is a list of strings.
-    if " mice " in line[11]:
-        mice_spot.append(line[:2])
-        #print(line[1], line[8]) #name and inspection date
-        #print(line[11])         #violation description
-        #print()
+sequenceOfBytes = fileFromUrl.read() #Slurp whole file into one big sequenceOfBytes.
+fileFromUrl.close()
 
-csvfile.close()
+try:
+    s = sequenceOfBytes.decode("utf-8")    #s is a string
+except UnicodeError as error:
+    print(error, file = sys.stderr)
+    sys.exit(1)
+
+lines = csv.reader(s.splitlines())   #lines is a list of lists
+
+#Two dictionaries that let you look up a CAMIS number and find the corresponding ...
+dba = {}                                   #name of the restaurant
+numberOfViolations = collections.Counter() #number of mice violations for that restaurant
+
+for line in lines:                     #line is a list of 26 strings
+    if "Evidence of mice or live mice present in facility's food and/or non-food areas." in line[11]:
+        camis = int(line[0])           #the id number of the restaurant
+        dba[camis] = line[1]           #Record the name of this restaurant.
+        numberOfViolations[camis] += 1 #Tally an additional violation.  Automatically starts at 0.
+
+for camis, n in numberOfViolations.most_common(10): #the 10 worst offenders, starting with the worst
+    print(f"{camis:8} {n:2} {dba[camis]}")
+
 sys.exit(0)
